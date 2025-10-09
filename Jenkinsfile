@@ -2,9 +2,9 @@ node {
     // Set job properties and triggers outside try-catch, early in the pipeline run
     properties([
         pipelineTriggers([
-            pollSCM('* * * * *'),   // Poll SCM every  minute
+            //pollSCM('* * * * *'),   // Poll SCM every  minute
             // cron('* * * * *'),        // Build periodically if needed
-            // githubPush()              // GitHub webhook trigger if needed
+             githubPush()              // GitHub webhook trigger if needed
         ])
     ])
 
@@ -60,5 +60,5 @@ def notifyBuild(String buildStatus = 'STARTED') {
         colorCode = '#00FF00'
     }
 
-    slackSend(color: colorCode, message: summary)
+    slackSend(color: colorCode, message: summary,channel: #airtel-project)
 }
