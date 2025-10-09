@@ -3,7 +3,7 @@ node {
     properties([
         pipelineTriggers([
             //pollSCM('* * * * *'),   // Poll SCM every  minute
-             cron('* * * * *'),        // Build periodically if needed
+             cron(' * * * * * '),        // Build periodically if needed
           //   githubPush()              // GitHub webhook trigger if needed
         ])
     ])
