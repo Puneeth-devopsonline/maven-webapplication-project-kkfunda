@@ -2,6 +2,19 @@
 node
 {
 
+
+// Set triggers using properties step
+    properties([
+        pipelineTriggers([
+            pollSCM('* * * * *'),   // Poll SCM every minute
+           // cron('* * * * *'),         // Build every minute
+           // githubPush()               // GitHub webhook trigger (GitHub plugin required)
+        ])
+    ])
+
+
+   
+
    echo "git branch name: ${env.BRANCH_NAME}"
    echo "build number is: ${env.BUILD_NUMBER}"
    echo "node name is: ${env.NODE_NAME}"
