@@ -61,5 +61,5 @@ def notifyBuild(String buildStatus = 'STARTED') {
     }
 
     slackSend(color: colorCode, message: summary, channel: '#airtel-project' )
-    slackSend(color: colorCode, message: summary, channel: '#airtel-dev' )
+    slackSend(color: colorCode, message: summary, channel: '#airtel-dev'  )
 }
