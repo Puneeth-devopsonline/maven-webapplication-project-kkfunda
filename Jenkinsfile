@@ -4,7 +4,7 @@ node {
         pipelineTriggers([
            // pollSCM(' * * * * * '),   // Poll SCM every  minute
            //  cron(' * * * * * '),        // Build periodically if needed
-             github Push()              // GitHub webhook trigger if needed
+            githubPush()              // GitHub webhook trigger if needed
         ])
     ])
 
