@@ -56,28 +56,25 @@ node
 
 
 def notifyBuild(String buildStatus = 'STARTED') {
-  // build status of null means successful
-  buildStatus =  buildStatus ?: 'SUCCESS'
+    buildStatus =  buildStatus ?: 'SUCCESS'
 
-  // Default values
-  def colorName = 'RED'
-  def colorCode = '#FF0000'
-  def subject = "${buildStatus}: Jobkkdevops '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
-  def summary = "${subject} (${env.BUILD_URL})"
+    // Declare local variables explicitly
+    def color = 'RED'
+    def colorCode = '#FF0000'
+    def subject = "${buildStatus}: Jobkkdevops '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+    def summary = "${subject} (${env.BUILD_URL})"
 
-  // Override default values based on build status
-  if (buildStatus == 'STARTED') {
-    color = 'BLUE'
-    colorCode = '#2757F5'
-  } else if (buildStatus == 'SUCCESS') {
-    color = 'GREEN'
-    colorCode = '#00FF00'
-  } else {
-    color = 'RED'
-    colorCode = '#FF0000'
-  }
+    if (buildStatus == 'STARTED') {
+        color = 'BLUE'
+        colorCode = '#2757F5'
+    } else if (buildStatus == 'SUCCESS') {
+        color = 'GREEN'
+        colorCode = '#00FF00'
+    } else {
+        color = 'RED'
+        colorCode = '#FF0000'
+    }
 
-  // Send notifications
-  slackSend (color: colorCode, message: summary)
-
+    slackSend(color: colorCode, message: summary)
 }
+
