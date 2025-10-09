@@ -1,75 +1,52 @@
-
-node
-{
-
-
-   echo "git branch name: ${env.BRANCH_NAME}"
-   echo "build number is: ${env.BUILD_NUMBER}"
-   echo "node name is: ${env.NODE_NAME}"
-
-
-   // /var/lib/jenkins/tools/hudson.tasks.Maven_MavenInstallation/maven-3.9.11/bin
-     def mavenHome =tool name: "maven 3.9.11"
-    try
-    {
-
-  notifyBuild('STARTED')
-
-
-        // Set triggers using properties step
+node {
+    // Set job properties and triggers outside try-catch, early in the pipeline run
     properties([
         pipelineTriggers([
-            pollSCM('* * * * *'),   // Poll SCM every minute
-           // cron('* * * * *'),         // Build every minute
-           // githubPush()               // GitHub webhook trigger (GitHub plugin required)
+            pollSCM('* * * * *'),   // Poll SCM every  minute
+            // cron('* * * * *'),        // Build periodically if needed
+            // githubPush()              // GitHub webhook trigger if needed
         ])
     ])
-  stage('git checkout')
-  {
-     git branch: 'development', url: 'https://github.com/Puneeth-devopsonline/maven-webapplication-project-kkfunda.git'
 
-  }
-  stage('Maven Build')
-  {
-     sh "${mavenHome}/bin/mvn clean package"
+    echo "git branch name: ${env.BRANCH_NAME}"
+    echo "build number is: ${env.BUILD_NUMBER}"
+    echo "node name is: ${env.NODE_NAME}"
 
-  }
-  stage('SQ Report')
-  {
-     sh "${mavenHome}/bin/mvn sonar:sonar"
-  } 
-  stage('Deploy into Nexus')
-  {
-    sh "${mavenHome}/bin/mvn deploy"
-  }
+    def mavenHome = tool name: "maven 3.9.11"
 
-    stage('Deploy to Tomcat') {
-        echo "Deploying WAR file using curl..."
+    try {
+        notifyBuild('STARTED')
 
-        sh """
-            curl -u balu:password \
-            --upload-file /var/lib/jenkins/workspace/pipeline-job/target/maven-web-application.war \
-            "http://54.196.194.227:8085/manager/text/deploy?path=/maven-web-application&update=true"
-        """
+        stage('git checkout') {
+            git branch: 'development', url: 'https://github.com/Puneeth-devopsonline/maven-webapplication-project-kkfunda.git'
+        }
+        stage('Maven Build') {
+            sh "${mavenHome}/bin/mvn clean package"
+        }
+        stage('SQ Report') {
+            sh "${mavenHome}/bin/mvn sonar:sonar"
+        }
+        stage('Deploy into Nexus') {
+            sh "${mavenHome}/bin/mvn deploy"
+        }
+        stage('Deploy to Tomcat') {
+            echo "Deploying WAR file using curl..."
+            sh """
+                curl -u balu:password \
+                --upload-file /var/lib/jenkins/workspace/pipeline-job/target/maven-web-application.war \
+                "http://54.196.194.227:8085/manager/text/deploy?path=/maven-web-application&update=true"
+            """
+        }
+    } catch (e) {
+        currentBuild.result = "FAILED"
+        throw e
+    } finally {
+        notifyBuild(currentBuild.result)
     }
-    }  //try ending
-
-    catch (e) {
-   
-       currentBuild.result = "FAILED"
-
-  } finally {
-    // Success or failure, always send notifications
-    notifyBuild(currentBuild.result)
-  }
-  
-} // node ending
-
+}
 
 def notifyBuild(String buildStatus = 'STARTED') {
-    buildStatus =  buildStatus ?: 'SUCCESS'
-
-    // Declare local variables explicitly
+    buildStatus = buildStatus ?: 'SUCCESS'
     def color = 'RED'
     def colorCode = '#FF0000'
     def subject = "${buildStatus}: Jobkkdevops '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
@@ -81,12 +58,7 @@ def notifyBuild(String buildStatus = 'STARTED') {
     } else if (buildStatus == 'SUCCESS') {
         color = 'GREEN'
         colorCode = '#00FF00'
-    } else {
-        color = 'RED'
-        colorCode = '#FF0000'
     }
 
-    slackSend(color: colorCode, message: summary, )
-   slackSend(color: colorCode, message: summary, )
+    slackSend(color: colorCode, message: summary)
 }
-
