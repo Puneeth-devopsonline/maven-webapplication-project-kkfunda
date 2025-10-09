@@ -60,5 +60,6 @@ def notifyBuild(String buildStatus = 'STARTED') {
         colorCode = '#00FF00'
     }
 
-    slackSend(color: colorCode, message: summary,channel: '#airtel-project')
+    slackSend(color: colorCode, message: summary, channel: '#airtel-project' )
+    slackSend(color: colorCode, message: summary, channel: '#airtel-dev' )
 }
