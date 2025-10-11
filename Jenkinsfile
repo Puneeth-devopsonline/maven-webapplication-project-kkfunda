@@ -51,7 +51,7 @@ pipeline {
                 sh """
                     curl -u balu:password \
                     --upload-file /var/lib/jenkins/workspace/pipeline-job-dec/target/maven-web-application.war \
-                    "http://3.91.185.27:8085/manager/text/deploy?path=/maven-web-application&update=true"
+                    "http://18.212.234.235:8085/manager/text/deploy?path=/maven-web-application&update=true"
                 """
             }
         }
